@@ -1,0 +1,74 @@
+<%- contentFor('body') %>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-box-arrow-in-right display-4 text-primary"></i>
+                        <h2 class="mt-2">Đăng nhập</h2>
+                        <p class="text-muted">Đăng nhập vào tài khoản của bạn</p>
+                    </div>
+
+                    <form action="/auth/login" method="POST" novalidate>
+                        <div class="mb-3">
+                            <label for="identifier" class="form-label">Email hoặc Username</label>
+                            <input type="text" class="form-control" id="identifier" name="identifier" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mật khẩu</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Ghi nhớ đăng nhập
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Đăng nhập
+                        </button>
+
+                        <div class="text-center">
+                            <p class="mb-2">
+                                <a href="/auth/forgot" class="text-decoration-none small">Quên mật khẩu?</a>
+                            </p>
+                            <p class="mb-0">Chưa có tài khoản? 
+                                <a href="/auth/register" class="text-decoration-none">Đăng ký tại đây</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle password visibility
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+    
+    togglePassword.addEventListener('click', function() {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        
+        const icon = this.querySelector('i');
+        icon.classList.toggle('bi-eye');
+        icon.classList.toggle('bi-eye-slash');
+    });
+
+    // Focus on identifier field
+    document.getElementById('identifier').focus();
+});
+</script>

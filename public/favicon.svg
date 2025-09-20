@@ -1,0 +1,8 @@
+<!-- Simple SVG favicon that can be used as .ico -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <rect width="16" height="16" fill="#0d6efd"/>
+  <rect x="3" y="3" width="10" height="8" fill="white" rx="1"/>
+  <rect x="4" y="5" width="3" height="1" fill="#0d6efd"/>
+  <rect x="4" y="7" width="5" height="1" fill="#0d6efd"/>
+  <rect x="4" y="9" width="4" height="1" fill="#0d6efd"/>
+</svg>
