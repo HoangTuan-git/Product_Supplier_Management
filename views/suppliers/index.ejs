@@ -1,0 +1,91 @@
+<%- contentFor('body') %>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-building"></i> Quản lý nhà cung cấp</h2>
+        <a href="/suppliers/new" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Thêm nhà cung cấp
+        </a>
+    </div>
+
+    <%- include('../partials/flash') %>
+
+    <!-- Search -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form action="/suppliers" method="GET" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm nhà cung cấp..." value="<%= search || '' %>">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Suppliers Grid -->
+    <% if (suppliers.length > 0) { %>
+        <div class="row">
+            <% suppliers.forEach(supplier => { %>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-building"></i>
+                                <%= supplier.name %>
+                            </h5>
+                            <p class="card-text">
+                                <i class="bi bi-geo-alt"></i> <%= supplier.address %><br>
+                                <i class="bi bi-telephone"></i> <%= supplier.phone %>
+                            </p>
+                            <div class="mt-auto">
+                                <small class="text-muted">
+                                    <%= supplier.productCount || 0 %> sản phẩm
+                                </small>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="btn-group w-100">
+                                <a href="/suppliers/<%= supplier._id %>" class="btn btn-outline-info btn-sm">
+                                    <i class="bi bi-eye"></i> Xem
+                                </a>
+                                <a href="/suppliers/<%= supplier._id %>/edit" class="btn btn-outline-warning btn-sm">
+                                    <i class="bi bi-pencil"></i> Sửa
+                                </a>
+                                <form action="/suppliers/<%= supplier._id %>?_method=DELETE" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                            onclick="return confirm('Bạn có chắc chắn muốn xóa nhà cung cấp này?')">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+            <nav aria-label="Pagination">
+                <ul class="pagination justify-content-center">
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>&search=<%= search || '' %>">
+                                <%= i %>
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        <% } %>
+
+    <% } else { %>
+        <div class="text-center py-5">
+            <i class="bi bi-building display-1 text-muted"></i>
+            <h3 class="mt-3">Chưa có nhà cung cấp nào</h3>
+            <p class="text-muted">Hãy thêm nhà cung cấp đầu tiên</p>
+            <a href="/suppliers/new" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Thêm nhà cung cấp
+            </a>
+        </div>
+    <% } %>
+</div>

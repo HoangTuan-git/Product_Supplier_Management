@@ -30,10 +30,10 @@ const authValidation = {
             }),
         
         body('phone')
-            .optional()
+            .optional({ checkFalsy: true })
             .trim()
-            .isMobilePhone('vi-VN')
-            .withMessage('Số điện thoại không hợp lệ')
+            .matches(/^[0-9]{10,11}$/)
+            .withMessage('Số điện thoại phải có 10-11 chữ số')
     ],
 
     login: [

@@ -4,12 +4,18 @@ const User = require('../models/User');
 // Middleware để attach user vào request
 const attachUser = async (req, res, next) => {
     try {
+        // Clear user first
+        req.user = null;
+        
         // Check session first
         if (req.session && req.session.userId) {
             const user = await User.findById(req.session.userId);
             if (user && user.isActive) {
                 req.user = user;
                 return next();
+            } else {
+                // Clear invalid session
+                req.session.destroy(() => {});
             }
         }
 
@@ -30,6 +36,9 @@ const attachUser = async (req, res, next) => {
                         email: user.email,
                         role: user.role
                     };
+                } else {
+                    // Clear invalid cookie
+                    res.clearCookie('authToken');
                 }
             } catch (tokenError) {
                 // Clear invalid cookie
@@ -40,6 +49,7 @@ const attachUser = async (req, res, next) => {
         next();
     } catch (error) {
         console.error('Attach user error:', error);
+        req.user = null;
         next();
     }
 };

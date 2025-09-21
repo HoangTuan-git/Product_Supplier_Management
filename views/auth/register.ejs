@@ -10,30 +10,52 @@
                         <p class="text-muted">Tạo tài khoản mới để sử dụng hệ thống</p>
                     </div>
 
-                    <form action="/auth/register" method="POST" novalidate>
+                    <% if (typeof messages !== 'undefined' && messages.error) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <%= messages.error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+
+                    <% if (typeof messages !== 'undefined' && messages.success) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <%= messages.success %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+
+                    <form action="/auth/register" method="POST">
+
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" class="form-control" id="username" name="username" 
-                                   value="<%= user.username || '' %>" required>
+                                   value="<%= (formData && formData.username) || '' %>" 
+                                   placeholder="Nhập username" required>
                             <div class="form-text">3-30 ký tự, chỉ chứa chữ, số và dấu gạch dưới</div>
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="email" 
-                                   value="<%= user.email || '' %>" required>
+                                   value="<%= (formData && formData.email) || '' %>" 
+                                   placeholder="Nhập địa chỉ email" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="phone" class="form-label">Số điện thoại</label>
                             <input type="tel" class="form-control" id="phone" name="phone" 
-                                   value="<%= user.phone || '' %>" placeholder="0123456789">
+                                   value="<%= (formData && formData.phone) || '' %>" 
+                                   placeholder="0123456789">
+                            <div class="form-text">Số điện thoại liên hệ (không bắt buộc)</div>
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Mật khẩu</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       placeholder="Nhập mật khẩu" required>
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                     <i class="bi bi-eye"></i>
                                 </button>
@@ -43,17 +65,23 @@
 
                         <div class="mb-4">
                             <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmPassword" 
+                                       name="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
-                            <i class="bi bi-person-plus"></i>
+                            <i class="bi bi-person-plus me-1"></i>
                             Đăng ký
                         </button>
 
                         <div class="text-center">
                             <p class="mb-0">Đã có tài khoản? 
-                                <a href="/auth/login" class="text-decoration-none">Đăng nhập tại đây</a>
+                                <a href="/auth/login" class="text-decoration-none fw-bold">Đăng nhập tại đây</a>
                             </p>
                         </div>
                     </form>
@@ -65,31 +93,91 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Toggle password visibility
-    const togglePassword = document.getElementById('togglePassword');
+    // Elements
     const password = document.getElementById('password');
-    
-    togglePassword.addEventListener('click', function() {
-        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-        password.setAttribute('type', type);
-        
-        const icon = this.querySelector('i');
-        icon.classList.toggle('bi-eye');
-        icon.classList.toggle('bi-eye-slash');
-    });
-
-    // Password confirmation validation
     const confirmPassword = document.getElementById('confirmPassword');
-    
-    function validatePasswords() {
-        if (password.value !== confirmPassword.value) {
-            confirmPassword.setCustomValidity('Mật khẩu xác nhận không khớp');
-        } else {
-            confirmPassword.setCustomValidity('');
-        }
+    const togglePassword = document.getElementById('togglePassword');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+
+    // Toggle password visibility for main password
+    if (togglePassword && password) {
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            
+            const icon = this.querySelector('i');
+            icon.classList.toggle('bi-eye');
+            icon.classList.toggle('bi-eye-slash');
+        });
     }
 
-    password.addEventListener('input', validatePasswords);
-    confirmPassword.addEventListener('input', validatePasswords);
+    // Toggle password visibility for confirm password
+    if (toggleConfirmPassword && confirmPassword) {
+        toggleConfirmPassword.addEventListener('click', function() {
+            const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPassword.setAttribute('type', type);
+            
+            const icon = this.querySelector('i');
+            icon.classList.toggle('bi-eye');
+            icon.classList.toggle('bi-eye-slash');
+        });
+    }
+
+    // Password confirmation validation
+    if (password && confirmPassword) {
+        function validatePasswords() {
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity('Mật khẩu xác nhận không khớp');
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        }
+
+        password.addEventListener('input', validatePasswords);
+        confirmPassword.addEventListener('input', validatePasswords);
+    }
+
+    // Auto-dismiss alerts after 5 seconds
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            if (alert.querySelector('.btn-close')) {
+                alert.querySelector('.btn-close').click();
+            }
+        }, 5000);
+    });
 });
 </script>
+
+<style>
+.card {
+    border-radius: 15px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.input-group .btn-outline-secondary {
+    border-color: #ced4da;
+}
+
+.input-group .btn-outline-secondary:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+</style>

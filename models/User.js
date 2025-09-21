@@ -26,9 +26,15 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: [true, 'Số điện thoại là bắt buộc'],
+        required: false,
         trim: true,
-        match: [/^[0-9]{10,11}$/, 'Số điện thoại phải có 10-11 chữ số']
+        validate: {
+            validator: function(v) {
+                // Nếu có giá trị thì phải match pattern, nếu không có thì ok
+                return !v || /^[0-9]{10,11}$/.test(v);
+            },
+            message: 'Số điện thoại phải có 10-11 chữ số'
+        }
     },
     role: {
         type: String,

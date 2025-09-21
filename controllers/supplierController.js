@@ -63,7 +63,7 @@ const supplierController = {
     new: (req, res) => {
         res.render('suppliers/new', {
             title: 'Thêm nhà cung cấp mới',
-            supplier: {}
+            formData: null
         });
     },
 
@@ -76,7 +76,7 @@ const supplierController = {
                 req.flash('error', errorMessages.join(', '));
                 return res.render('suppliers/new', {
                     title: 'Thêm nhà cung cấp mới',
-                    supplier: req.body
+                    formData: req.body
                 });
             }
 
@@ -94,7 +94,7 @@ const supplierController = {
                 req.flash('error', 'Nhà cung cấp với tên hoặc số điện thoại này đã tồn tại');
                 return res.render('suppliers/new', {
                     title: 'Thêm nhà cung cấp mới',
-                    supplier: req.body
+                    formData: req.body
                 });
             }
 
@@ -116,7 +116,7 @@ const supplierController = {
             req.flash('error', 'Có lỗi xảy ra: ' + error.message);
             res.render('suppliers/new', {
                 title: 'Thêm nhà cung cấp mới',
-                supplier: req.body
+                formData: req.body
             });
         }
     },

@@ -1,8 +1,14 @@
 const errorMiddleware = {
     // 404 Error Handler
     notFound: (req, res, next) => {
-        // Don't create errors for common browser requests
-        const ignoredPaths = ['/favicon.ico', '/robots.txt', '/sitemap.xml', '/apple-touch-icon.png'];
+        // Don't create errors for common browser requests and DevTools
+        const ignoredPaths = [
+            '/favicon.ico', 
+            '/robots.txt', 
+            '/sitemap.xml', 
+            '/apple-touch-icon.png',
+            '/.well-known/appspecific/com.chrome.devtools.json'
+        ];
         
         if (ignoredPaths.includes(req.originalUrl)) {
             return res.status(204).end();
@@ -15,8 +21,14 @@ const errorMiddleware = {
 
     // General Error Handler
     errorHandler: (err, req, res, next) => {
-        // Don't log common browser request errors
-        const ignoredPaths = ['/favicon.ico', '/robots.txt', '/sitemap.xml', '/apple-touch-icon.png'];
+        // Don't log common browser request errors and DevTools
+        const ignoredPaths = [
+            '/favicon.ico', 
+            '/robots.txt', 
+            '/sitemap.xml', 
+            '/apple-touch-icon.png',
+            '/.well-known/appspecific/com.chrome.devtools.json'
+        ];
         const shouldLog = !ignoredPaths.includes(req.originalUrl) || err.status !== 404;
         
         if (shouldLog) {

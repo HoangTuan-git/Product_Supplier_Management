@@ -6,6 +6,15 @@ const homeController = {
     // GET / - Trang chủ
     index: async (req, res) => {
         try {
+            // Handle logout messages from URL params
+            const { success, error } = req.query;
+            if (success) {
+                req.flash('success', success);
+            }
+            if (error) {
+                req.flash('error', error);
+            }
+
             // Lấy thống kê tổng quan
             const totalProducts = await Product.countDocuments();
             const totalSuppliers = await Supplier.countDocuments();

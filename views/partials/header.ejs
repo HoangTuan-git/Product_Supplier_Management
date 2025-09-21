@@ -67,7 +67,7 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form action="/auth/logout" method="POST" class="d-inline">
+                                <form action="/auth/logout" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn đăng xuất?')">
                                     <button type="submit" class="dropdown-item">
                                         <i class="bi bi-box-arrow-right"></i> Đăng xuất
                                     </button>

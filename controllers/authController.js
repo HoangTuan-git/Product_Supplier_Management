@@ -9,7 +9,8 @@ const authController = {
     showRegister: (req, res) => {
         res.render('auth/register', {
             title: 'Đăng ký tài khoản',
-            user: {}
+            user: null, // Clear form on initial load
+            formData: {} 
         });
     },
 
@@ -22,7 +23,8 @@ const authController = {
                 req.flash('error', errorMessages.join(', '));
                 return res.render('auth/register', {
                     title: 'Đăng ký tài khoản',
-                    user: req.body
+                    user: null, 
+                    formData: req.body // Preserve entered data
                 });
             }
 
@@ -37,7 +39,8 @@ const authController = {
                 req.flash('error', 'Email hoặc username đã tồn tại');
                 return res.render('auth/register', {
                     title: 'Đăng ký tài khoản',
-                    user: req.body
+                    user: null, // Clear form on error
+                    formData: req.body // Preserve entered data
                 });
             }
 
@@ -59,7 +62,8 @@ const authController = {
             req.flash('error', 'Có lỗi xảy ra: ' + error.message);
             res.render('auth/register', {
                 title: 'Đăng ký tài khoản',
-                user: req.body
+                user: null, // Clear form on error
+                formData: req.body // Preserve entered data
             });
         }
     },
@@ -160,20 +164,33 @@ const authController = {
 
     // POST /auth/logout - Đăng xuất
     logout: (req, res) => {
-        req.session.destroy((err) => {
-            if (err) {
-                console.error('Session destruction error:', err);
-                req.flash('error', 'Có lỗi xảy ra khi đăng xuất');
-                return res.redirect('/');
-            }
+        try {
+            // Clear cookies first
+            res.clearCookie('sessionId', { 
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax'
+            });
+            res.clearCookie('authToken', {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax'
+            });
 
-            // Clear cookies
-            res.clearCookie('sessionId');
-            res.clearCookie('authToken');
-            
-            req.flash('success', 'Đăng xuất thành công!');
-            res.redirect('/');
-        });
+            // Destroy session
+            req.session.destroy((err) => {
+                if (err) {
+                    console.error('Session destruction error:', err);
+                    return res.redirect('/?error=' + encodeURIComponent('Có lỗi xảy ra khi đăng xuất'));
+                }
+
+                // Redirect immediately after successful logout
+                res.redirect('/?success=' + encodeURIComponent('Đăng xuất thành công!'));
+            });
+        } catch (error) {
+            console.error('Logout error:', error);
+            res.redirect('/?error=' + encodeURIComponent('Có lỗi xảy ra khi đăng xuất'));
+        }
     },
 
     // GET /auth/forgot - Hiển thị trang quên mật khẩu
@@ -204,7 +221,7 @@ const authController = {
 
             // Gửi email (nếu có cấu hình)
             if (process.env.EMAIL_HOST) {
-                const transporter = nodemailer.createTransporter({
+                const transporter = nodemailer.createTransport({
                     host: process.env.EMAIL_HOST,
                     port: process.env.EMAIL_PORT,
                     auth: {

@@ -100,7 +100,7 @@ const productController = {
             
             res.render('products/new', {
                 title: 'Thêm sản phẩm mới',
-                product: {},
+                formData: null,
                 suppliers
             });
 
@@ -121,7 +121,7 @@ const productController = {
                 const suppliers = await Supplier.getActiveSuppliers();
                 return res.render('products/new', {
                     title: 'Thêm sản phẩm mới',
-                    product: req.body,
+                    formData: req.body,
                     suppliers
                 });
             }
@@ -135,7 +135,7 @@ const productController = {
                 const suppliers = await Supplier.getActiveSuppliers();
                 return res.render('products/new', {
                     title: 'Thêm sản phẩm mới',
-                    product: req.body,
+                    formData: req.body,
                     suppliers
                 });
             }
@@ -176,7 +176,7 @@ const productController = {
             const suppliers = await Supplier.getActiveSuppliers();
             res.render('products/new', {
                 title: 'Thêm sản phẩm mới',
-                product: req.body,
+                formData: req.body,
                 suppliers
             });
         }
